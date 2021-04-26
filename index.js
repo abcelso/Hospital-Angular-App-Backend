@@ -12,14 +12,17 @@ const app = express();
 // Configuración CORS
 app.use( cors() );
 
+// Lectura y parseo del body
+app.use( express.json() );
+
+// Conexion a la DB
 connectionDB();
 
-app.get('/', (req, res) => {
-    res.json({
-        ok: true,
-        msg: "Hola Mundo"
-    });
-})
+
+// Rutas
+app.use('/api/usuarios', require('./routers/usuarios'));
+
+
 
 app.listen(port, () => console.log('Escuchando el puerto', port));
 
