@@ -3,7 +3,9 @@ const { response } = require("express");
 const bcrypt = require("bcryptjs");
 
 const Usuario = require("../models/usuario");
+const generarJWT = require("../helper/jwt");
 
+//? Leer usuarios
 const getUsuarios = async (req, res) => {
   const usuarios = await Usuario.find({}, "nombre email role google");
 
@@ -13,6 +15,7 @@ const getUsuarios = async (req, res) => {
   });
 };
 
+//? Crear usuario
 const crearUsuario = async (req, res = response) => {
   const { email, password } = req.body;
 
@@ -26,13 +29,15 @@ const crearUsuario = async (req, res = response) => {
       });
     }
 
-    // Creo usuario
+    //! Creo usuario
     const user = new Usuario(req.body);
 
     // Encriptar la contraseña
     const salt = bcrypt.genSaltSync();
-
     user.password = bcrypt.hashSync(password, salt);
+
+    // Generar token
+    const token = await generarJWT(user.id);
 
     // Guardar el usuario creado
     await user.save();
@@ -40,6 +45,7 @@ const crearUsuario = async (req, res = response) => {
     res.json({
       ok: true,
       user,
+      token
     });
   } catch (error) {
     console.log(error);
@@ -51,6 +57,7 @@ const crearUsuario = async (req, res = response) => {
   }
 };
 
+//? Update usuario
 const updateUsuario = async (req, res = response) => {
   const uid = req.params.uid;
 
@@ -80,7 +87,7 @@ const updateUsuario = async (req, res = response) => {
 
     body.email = email;
 
-    // Actualizar por id
+    //? Actualizar por id
     const updUser = await Usuario.findByIdAndUpdate(uid, body, { new: true });
 
     res.json({
@@ -96,6 +103,7 @@ const updateUsuario = async (req, res = response) => {
   }
 };
 
+//? Borrar usuario
 const deleteUsuario = async (req, res = response) => {
   const uid = req.params.uid;
 
