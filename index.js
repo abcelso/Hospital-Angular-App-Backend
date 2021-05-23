@@ -24,6 +24,7 @@ app.use('/api/usuarios', require('./routers/usuarios'));
 app.use('/api/login', require('./routers/auth'));
 app.use('/api/hospitales', require('./routers/hospitales'));
 app.use('/api/medicos', require('./routers/medicos'));
+app.use('/api/todo', require('./routers/busquedas'));
 
 
 app.listen(port, () => console.log('Escuchando el puerto', port));
