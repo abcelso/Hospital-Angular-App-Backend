@@ -7,16 +7,23 @@ const generarJWT = require("../helper/jwt");
 
 //? Leer usuarios
 const getUsuarios = async (req, res) => {
-  const usuarios = await Usuario.find({}, "nombre email role google");
+  const desde = Number(req.query.desde);
+
+  const usuarios = await Usuario.find({}, "nombre email role google")
+    .skip(desde)
+    .limit(5);
+
+  const cuenta = await Usuario.countDocuments();
 
   res.json({
     ok: true,
     user: usuarios,
+    cuenta,
   });
 };
 
 //? Crear usuario
-const crearUsuario = async (req, res = response) => {
+const createUsuario = async (req, res = response) => {
   const { email, password } = req.body;
 
   try {
@@ -45,7 +52,7 @@ const crearUsuario = async (req, res = response) => {
     res.json({
       ok: true,
       user,
-      token
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -94,7 +101,6 @@ const updateUsuario = async (req, res = response) => {
       ok: true,
       user: updUser,
     });
-
   } catch (error) {
     res.status(500).json({
       ok: false,
@@ -134,7 +140,7 @@ const deleteUsuario = async (req, res = response) => {
 
 module.exports = {
   getUsuarios,
-  crearUsuario,
+  createUsuario,
   updateUsuario,
   deleteUsuario,
 };

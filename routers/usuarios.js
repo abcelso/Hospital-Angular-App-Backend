@@ -1,4 +1,4 @@
-const { getUsuarios, crearUsuario, updateUsuario, deleteUsuario } = require("../controllers/usuarios");
+const { getUsuarios, createUsuario, updateUsuario, deleteUsuario } = require("../controllers/usuarios");
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require("../middlewares/validar-campos");
@@ -15,7 +15,7 @@ router.post('/',
         check('password', 'El password es obligatorio').not().isEmpty(),
         validarCampos
     ],
-    crearUsuario
+    createUsuario
 );
 
 router.put('/:uid',
