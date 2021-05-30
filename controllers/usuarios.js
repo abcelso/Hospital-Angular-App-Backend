@@ -9,7 +9,7 @@ const generarJWT = require("../helper/jwt");
 const getUsuarios = async (req, res) => {
   const desde = Number(req.query.desde);
 
-  const usuarios = await Usuario.find({}, "nombre email role google")
+  const usuarios = await Usuario.find({}, "nombre email role google img")
     .skip(desde)
     .limit(5);
 

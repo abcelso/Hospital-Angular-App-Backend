@@ -8,7 +8,7 @@ const getHospital = async(req, res = response) => {
 
     try {
 
-        const hospitales = await Hospital.find({}, 'nombre usuario')
+        const hospitales = await Hospital.find({}, 'nombre usuario img')
                                             .populate('usuario', 'nombre');
 
         if (hospitales.length === 0){

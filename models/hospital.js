@@ -11,7 +11,7 @@ const HospitalSchema = Schema({
         ref: 'Usuario',
         required: true
     },
-    image: {
+    img: {
         type: String
     }
 });
