@@ -1,4 +1,5 @@
 const { response } = require('express');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const updateImage = require('../helper/actualizar-imagen');
 
@@ -55,7 +56,7 @@ const fileUpload = (req, res = response) => {
                 msg: err
             });
         }
-        
+
         // Actualizar imagen en la base de datos
         updateImage(type, id, archiveName);
 
@@ -68,4 +69,23 @@ const fileUpload = (req, res = response) => {
 
 };
 
-module.exports = fileUpload;
+const getPicture = (req, res= response) => {
+
+    const type = req.params.type;
+    const picture = req.params.picture;
+
+    const pathPicture = path.join(__dirname, `../uploads/${ type }/${ picture }`);
+
+    res.sendFile(pathPicture, () =>{
+        // res.status(400).json({
+        //     ok: false,
+        //     msg: 'Picture not exist!!'
+        // });
+        res.sendFile(path.join(__dirname, `../uploads/no-img.jpg`));
+    });
+}
+
+module.exports = {
+    fileUpload,
+    getPicture
+};
