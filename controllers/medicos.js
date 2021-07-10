@@ -65,19 +65,72 @@ const createMedico = async(req = request, res = response) => {
 
 const updateMedico = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'updateMedico'
-    });
+    const id = req.params.id;
+
+    // Obtenemos el uid del usuario desde el token
+    const token = req.header('x-token');
+    const uid = jwt.decode(token, process.env.JWT_SECRET).uid;
+
+    try {
+
+        const medicoDB = await Medico.findById(id);
+
+        if (!medicoDB){
+            return res.status(401).json({
+                ok: false,
+                msg: 'El médico con ese id no existe'
+            });
+        }
+
+        const medicoChange = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const medicoUpdated = await Medico.findByIdAndUpdate(id, medicoChange, { new: true, useFindAndModify: false });
+
+        res.json({
+            ok: true,
+            medico: medicoUpdated
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        })
+    }
 
 }
 
 const deleteMedico = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'deleteMedico'
-    });
+    const id = req.params.id;
+
+    try {
+
+        const medicoDB = await Medico.findById(id);
+
+        if (!medicoDB){
+            return res.status(401).json({
+                ok: false,
+                msg: 'El medico con ese id no existe'
+            });
+        }
+
+        await Medico.findByIdAndDelete(id);
+
+        res.json({
+            ok: true,
+            msg: 'Medico deleted'
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        })
+    }
 
 }
 

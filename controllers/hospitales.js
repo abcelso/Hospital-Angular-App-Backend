@@ -64,19 +64,71 @@ const createHospital = async(req = request, res = response) => {
 
 const updateHospital = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'updateHospital'
-    })
+    const id = req.params.id;
+
+    // Obtener el uid del usuario desde el token
+    const token = req.header('x-token');
+    const uid = jwt.decode(token, process.env.JWT_SECRET).uid;
+
+    try {
+        const hospitalDB = await Hospital.findById(id);
+
+        if (!hospitalDB){
+            return res.status(401).json({
+                ok: false,
+                msg: 'No se encontró el hospital con ese id'
+            });
+        }
+
+        const hospitalChanges = {
+            ...req.body,
+            usuario: uid
+        };
+
+        const hospitalUpdated = await Hospital.findByIdAndUpdate(id, hospitalChanges, { new: true, useFindAndModify: false});
+
+        res.json({
+            ok: true,
+            hospital: hospitalUpdated
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        })
+    }
 
 };
 
 const deleteHospital = async(req, res = response) => {
 
-    res.json({
-        ok: true,
-        msg: 'deleteHospital'
-    });
+    const id = req.params.id;
+
+    try {
+
+        const hospitalDB = await Hospital.findById(id);
+
+        if (!hospitalDB){
+            return res.status(401).json({
+                ok: false,
+                msg: 'El hospital con ese id no existe'
+            });
+        }
+
+        await Hospital.findByIdAndDelete(id);
+        
+        res.json({
+            ok: true,
+            msg: 'Hospital deleted'
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        });
+    }
 
 };
 
