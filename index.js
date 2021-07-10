@@ -18,6 +18,8 @@ app.use( express.json() );
 // Conexion a la DB
 connectionDB();
 
+// ruta public
+app.use( express.static('public') );
 
 // Rutas
 app.use('/api/usuarios', require('./routers/usuarios'));
