@@ -25,7 +25,8 @@ const MedicoSchema = Schema({
 });
 
 MedicoSchema.method('toJSON', function(){
-    const {_v, ...object } = this.toObject();
+    const {_v, _id, ...object } = this.toObject();
+    object.id = _id;
     return object;
 });
 

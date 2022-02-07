@@ -33,6 +33,36 @@ const getMedicos = async(req, res = response) => {
 
 }
 
+const getMedicoById = async(req, res = response) => {
+
+    const medicoId = req.params.text;
+
+    try {
+        const medico = await Medico.findById(medicoId)
+                                    .populate('usuario', 'nombre')
+                                    .populate('hospital', 'nombre');
+
+        if (medico.length === 0){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No se encontró ningún médico en la BD'
+            });
+        }
+
+        res.json({
+            ok: true,
+            medico
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        });
+    }
+
+}
+
 const createMedico = async(req = request, res = response) => {
 
     // Obtenemos el uid del usuario desde el token
@@ -51,7 +81,7 @@ const createMedico = async(req = request, res = response) => {
 
         res.json({
             ok: true,
-            msg: medicoDB
+            medico: medicoDB
         });
 
     } catch (error) {
@@ -95,7 +125,7 @@ const updateMedico = async(req, res = response) => {
         });
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
             msg: 'Error inesperado'
         })
@@ -126,7 +156,7 @@ const deleteMedico = async(req, res = response) => {
         });
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
             msg: 'Error inesperado'
         })
@@ -136,6 +166,7 @@ const deleteMedico = async(req, res = response) => {
 
 module.exports = {
     getMedicos,
+    getMedicoById,
     createMedico,
     updateMedico,
     deleteMedico

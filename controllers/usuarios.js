@@ -69,7 +69,7 @@ const updateUsuario = async (req, res = response) => {
   const uid = req.params.uid;
 
   try {
-    const userDB = await Usuario.findById(uid);
+    const userDB = await Usuario.findById(uid); 
 
     if (!userDB) {
       return res.status(400).json({
@@ -92,7 +92,14 @@ const updateUsuario = async (req, res = response) => {
       }
     }
 
-    body.email = email;
+    if (!userDB.google){
+      body.email = email;
+    }else if (userDB.email != email){
+      return res.status(400).json({
+        ok: false,
+        msg: "El email no puede ser cambiado"
+      })
+    }
 
     //? Actualizar por id
     const updUser = await Usuario.findByIdAndUpdate(uid, body, { new: true, useFindAndModify: false });

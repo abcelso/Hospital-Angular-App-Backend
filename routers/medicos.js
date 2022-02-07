@@ -5,17 +5,22 @@ const {
   createMedico,
   updateMedico,
   deleteMedico,
+  getMedicoById,
 } = require("../controllers/medicos");
 const { validarCampos } = require("../middlewares/validar-campos");
+
 const validarJWS = require("../middlewares/validar-jwt");
 
 const router = Router();
 
-router.get("/", validarJWS, getMedicos);
+router.use(validarJWS);
+
+router.get("/", getMedicos);
+
+// router.get("/:id", getMedicoById);
 
 router.post(
   "/",
-  validarJWS,
   [
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
     check("hospital", "El hospital id debe ser válido").isMongoId(),
@@ -26,7 +31,6 @@ router.post(
 
 router.put(
   "/:id",
-  validarJWS,
   [
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
     check("hospital", "El hospital id debe ser válido").isMongoId(),
@@ -35,6 +39,6 @@ router.put(
   updateMedico
 );
 
-router.delete("/:id", validarJWS, deleteMedico);
+router.delete("/:id", deleteMedico);
 
 module.exports = router;

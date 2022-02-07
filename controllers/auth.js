@@ -54,7 +54,6 @@ const googleSignin = async (req, res=response) => {
 
     const googleToken = await req.body.token;
 
-
     try {
         const {name, email, picture } = await verify(googleToken);
         const userDB = await Usuario.findOne({email});
@@ -103,12 +102,15 @@ const renewToken = async(req, res = response) => {
     const token_header = req.header('x-token');
     const uid = jwt.decode(token_header, process.env.JWT_SECRET).uid;
 
+    const user = await Usuario.findById(uid);
+
     // Token - JWT
     const token = await generarJWT(uid);
 
     res.json({
         ok: true,
-        token
+        token,
+        user
     })
 }
 
